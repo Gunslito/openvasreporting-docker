@@ -17,7 +17,7 @@ Credits to [TheGroundZero](https://github.com/TheGroundZero) for the original im
 ## Requirements
 
  - [Docker](https://www.docker.com/)
- - Git
+ - Git (For offline image build)
 
 ## Docker Hub Image
  - [gunslito/openvasreporting](https://hub.docker.com/r/gunslito/openvasreporting)
