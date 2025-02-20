@@ -19,20 +19,48 @@ Credits to [TheGroundZero](https://github.com/TheGroundZero) for the original im
  - [Docker](https://www.docker.com/)
  - Git
 
-## Installation (Docker)
+## Docker Hub Image
+ - [gunslito/openvasreporting](https://hub.docker.com/r/gunslito/openvasreporting)
+
+## Installation (Docker build - optional)
 
     git clone https://github.com/Gunslito/openvasreporting-docker.git
     cd openvasreporting-docker
-    docker build -t openvasreporting .
+    docker build -t gunslito/openvasreporting .
 
 ## Usage (Docker)
 
-    docker run --rm -v /path/to/local/folder:/data openvasreporting -i /data/input.xml -o /data/output.xlsx [-f [Output format]] [-l [minimal threat level (n, l, m, h, c)]] [-t [docx template]]
+```bash
+localpath="/path/to/local/folder"
+tagversion="latest"
 
-    current folder execution:
-    docker run --rm -v $(pwd):/data openvasreporting -i /data/input.xml -o /data/output.xlsx
+docker run --rm -v ${localpath}:/data gunslito/openvasreporting:${tagversion} -i /data/input.xml -o /data/output.xlsx
+```
 
-    alias openvasreporting='docker run --rm -v /path/to/local/folder:/data openvasreporting'
+## Parameters:
+
+- **Volume Mounting (`-v /path/to/local/folder:/data`)**  
+  Maps a local directory to the container's `/data` directory for input and output file access.
+
+- **Input File (`-i /data/input.xml`)**  
+  Specifies the path to the OpenVAS XML report within the container.
+
+- **Output File (`-o /data/output.xlsx`)**  
+  Defines the desired output file path and name within the container.
+
+- **Output Format (`-f`)** *(optional)*  
+  Sets the report format: `xlsx` for Excel or `docx` for Word.
+
+- **Minimal Threat Level (`-l`)** *(optional)*  
+  Filters vulnerabilities by minimum threat level:  
+  - `n` = none  
+  - `l` = low  
+  - `m` = medium  
+  - `h` = high  
+  - `c` = critical  
+
+- **Template (`-t`)** *(optional)*  
+  Specifies a custom Word template for the report.
 
 For more information on usage and filtering options, refer to the original documentation.
 
