@@ -7,9 +7,9 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-COPY src app/
+COPY src /app/
 
-WORKDIR /app/openvasreporting
+WORKDIR /app/
 
 RUN pip install --upgrade pip && \
     pip install --upgrade build pyyaml defusedxml
