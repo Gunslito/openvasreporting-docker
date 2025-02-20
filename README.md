@@ -24,6 +24,7 @@ Credits to [TheGroundZero](https://github.com/TheGroundZero) for the original im
 
 ## Local image build & use (Offline)
 
+    localpath="/path/to/local/folder"
     git clone https://github.com/Gunslito/openvasreporting-docker.git
     cd openvasreporting-docker
     docker build -t gunslito/openvasreporting .
