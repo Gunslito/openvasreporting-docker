@@ -20,7 +20,7 @@ Credits to [TheGroundZero](https://github.com/TheGroundZero) for the original im
 
 ## Requirements
 
- - [Docker](https://www.docker.com/) (Recommended for this fork)
+ - [Docker](https://www.docker.com/)
  - Git
 
 ## Installation (Docker)
