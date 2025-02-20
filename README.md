@@ -24,11 +24,13 @@ Credits to [TheGroundZero](https://github.com/TheGroundZero) for the original im
 
 ## Local image build & use (Offline)
 
+```bash
     localpath="/path/to/local/folder"
     git clone https://github.com/Gunslito/openvasreporting-docker.git
     cd openvasreporting-docker
     docker build -t gunslito/openvasreporting .
     docker run --rm -v ${localpath}:/data openvasreporting -i /data/input.xml -o /data/output.xlsx
+```
 
 ## Usage (Online)
 
