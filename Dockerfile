@@ -7,9 +7,9 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-RUN git clone https://github.com/Gunslito/openvasreporting-docker.git
+COPY src app/
 
-WORKDIR /app/src/openvasreporting
+WORKDIR /app/openvasreporting
 
 RUN pip install --upgrade pip && \
     pip install --upgrade build pyyaml defusedxml
