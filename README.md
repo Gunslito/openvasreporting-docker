@@ -1,4 +1,5 @@
 # OpenVAS Reporting (Dockerized):  
+[![Known Vulnerabilities](https://snyk.io/test/github/Gunslito/openvasreporting-docker/badge.svg?targetFile=src/requirements.txt)](https://snyk.io/test/github/Gunslito/openvasreporting-docker?targetFile=src%2Frequirements.txt&tab=issues)
 
 A tool to convert [OpenVAS](http://www.openvas.org/) XML into reports, now dockerized.
 
