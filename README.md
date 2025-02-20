@@ -1,5 +1,10 @@
-# OpenVAS Reporting (Dockerized):  
+# OpenVAS Reporting (Dockerized):
+
+[![GitHub version](https://badge.fury.io/gh/gunslito%2Fopenvasreporting-docker.svg)](https://badge.fury.io/gh/gunslito%2Fopenvasreporting-docker)
 [![Known Vulnerabilities](https://snyk.io/test/github/Gunslito/openvasreporting-docker/badge.svg?targetFile=src/requirements.txt)](https://snyk.io/test/github/Gunslito/openvasreporting-docker?targetFile=src%2Frequirements.txt&tab=issues)
+[![Docs](https://readthedocs.org/projects/openvas-reporting/badge/?version=latest&style=flat)](https://openvas-reporting.sequr.be)
+[![PyPI - Version](https://img.shields.io/pypi/v/OpenVAS-Reporting.svg)](https://pypi.org/project/OpenVAS-Reporting/)
+[![PyPI - Format](https://img.shields.io/pypi/format/OpenVAS-Reporting.svg)](https://pypi.org/project/OpenVAS-Reporting/)  
 
 A tool to convert [OpenVAS](http://www.openvas.org/) XML into reports, now dockerized.
 
