@@ -31,9 +31,12 @@ Credits to [TheGroundZero](https://github.com/TheGroundZero) for the original im
 
 ## Usage (Docker)
 
-    docker run --rm -v $(pwd)/reports:/app/reports openvasreporting -i [OpenVAS xml file(s)] [-o [Output file]] [-f [Output format]] [-l [minimal threat level (n, l, m, h, c)]] [-t [docx template]]
+    docker run --rm -v /path/to/local/folder:/data openvasreporting -i /data/input.xml -o /data/output.xlsx [-f [Output format]] [-l [minimal threat level (n, l, m, h, c)]] [-t [docx template]]
 
-    alias openvasreporting='docker run --rm -v $(pwd)/reports:/app/reports openvasreporting'
+    current folder execution:
+    docker run --rm -v $(pwd):/data openvasreporting -i /data/input.xml -o /data/output.xlsx
+
+    alias openvasreporting='docker run --rm -v /path/to/local/folder:/data openvasreporting'
 
 For more information on usage and filtering options, refer to the original documentation.
 
