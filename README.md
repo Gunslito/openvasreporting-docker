@@ -12,7 +12,7 @@ A tool to convert [OpenVAS](http://www.openvas.org/) XML into reports, now docke
 
 # About this Fork
 
-This is a **Dockerized** version of OpenVAS Reporting, forked from the original project [openvasreporting](https://github.com/TheGroundZero/openvasreporting). This fork aims to facilitate the deployment and execution of the tool within a containerized environment.
+This is a **Dockerized** version of OpenVAS Reporting, forked from the original project [openvasreporting](https://github.com/TheGroundZero/openvasreporting). This fork aims to fix some problems with the parser and facilitate the deployment and execution of the tool within a containerized environment.
 
 Credits to [TheGroundZero](https://github.com/TheGroundZero) for the original implementation.
 
@@ -53,4 +53,4 @@ Worksheets are sorted according to CVSS score and are colored according to the v
 ## Credits
 
 Original project by [TheGroundZero](https://github.com/TheGroundZero/openvasreporting).  
-Dockerization and maintenance by [Gunslito](https://github.com/Gunslito).
+Dockerization and parser fixing by [Gunslito](https://github.com/Gunslito).
