@@ -126,36 +126,36 @@ class Port(object):
 
 class ParseVulnerability:
     """
-    Parses and analyses a Vulnerability XML Entry 
+    Parses and analyses a Vulnerability XML Entry
     """
     def __init__(self, vuln, min_level: str):
         """
         Parses an openvas <result> xml Et.Element.
-        
+
         : param: vuln: <result> openvas xml report element
         : type: xml.etree import ElementTree as Et or xml.etree import cElementTree as Et
-        
+
         : param: min_level: minimal level for inclusion on the report
         : type: one of {c, h, m, l, n}
-        
+
         returns self instance populated with values from <result> subtags
         """
         if not isinstance(min_level, str):
             raise TypeError("expected str, got '{}' instead".format(type(str)))
 
         nvt_tmp = vuln.find("./nvt")
-    
+
         # --------------------
         #
         # VULN_NAME
         self.vuln_name:str = nvt_tmp.find("./name").text
-    
+
         if dolog: logging.debug(
             "--------------------------------------------------------------------------------")
         if dolog: logging.debug("- {}".format(self.vuln_name))  # DEBUG
         if dolog: logging.debug(
             "--------------------------------------------------------------------------------")
-    
+
 
         # --------------------
         #
@@ -167,7 +167,7 @@ class ParseVulnerability:
         match = re.search(r'Installed version: ((\d|.)+)', desc)
         if match is not None :
             self.vuln_version = match.group(1)
-            
+
         if dolog: logging.debug("* vuln_version:\t{}".format(self.vuln_version))  # DEBUG
 
         # --------------------
@@ -178,7 +178,7 @@ class ParseVulnerability:
             if dolog: logging.debug("  ==> SKIP")  # DEBUG
             raise ValueError("Expected valid <result> openvas xml element, got '{}' instead".format(vuln.text))
         if dolog: logging.debug("* vuln_id:\t{}".format(self.vuln_id))  # DEBUG
-    
+
         # --------------------
         #
         # VULN_CVSS
@@ -187,7 +187,7 @@ class ParseVulnerability:
             self.vuln_cvss = 0.0
         self.vuln_cvss = float(self.vuln_cvss)
         if dolog: logging.debug("* vuln_cvss:\t{}".format(self.vuln_cvss))  # DEBUG
-    
+
         # --------------------
         #
         # VULN_LEVEL
@@ -197,24 +197,37 @@ class ParseVulnerability:
                 self.vuln_level = level
                 if dolog: logging.debug("* vuln_level:\t{}".format(self.vuln_level))  # DEBUG
                 break
-    
+
         if dolog: logging.debug("* min_level:\t{}".format(min_level))  # DEBUG
         if self.vuln_level not in Config.min_levels()[min_level]:
             if dolog: logging.debug("   => SKIP")  # DEBUG
             raise ValueError("Expected min_level in one of 'chmln', got '{}' instead".format(min_level))
-    
+
         # --------------------
         #
         # VULN_HOST
         self.vuln_host:str = vuln.find("./host").text
-        self.vuln_host_name:str = vuln.find("./host/hostname").text
+
+        host_elem = vuln.find("./host/hostname")
+        if host_elem is not None and host_elem.text is not None:
+            self.vuln_host_name = host_elem.text
+        else:
+            self.vuln_host_name = "N/A"
+
+        if dolog:
+            logging.debug("* hostname:\t{}".format(self.vuln_host_name))  # DEBUG
+
+        self.vuln_port = vuln.find("./port").text
+        if dolog:
+            logging.debug("* vuln_host:\t{} port:\t{}".format(self.vuln_host, self.vuln_port))  # DEBUG
+
         if self.vuln_host_name is None:
             self.vuln_host_name = "N/A"
         if dolog: logging.debug("* hostname:\t{}".format(self.vuln_host_name))  # DEBUG
         self.vuln_port = vuln.find("./port").text
         if dolog: logging.debug(
             "* vuln_host:\t{} port:\t{}".format(self.vuln_host, self.vuln_port))  # DEBUG
-    
+
         # --------------------
         #
         # VULN_TAGS
@@ -226,7 +239,7 @@ class ParseVulnerability:
         vuln_tags_temp = self.vuln_tags_text.split('|')
         self.vuln_tags = dict(tag.split('=', 1) for tag in vuln_tags_temp)
         if dolog: logging.debug("* vuln_tags:\t{}".format(self.vuln_tags))  # DEBUG
-    
+
         # --------------------
         #
         # VULN_THREAT
@@ -235,16 +248,16 @@ class ParseVulnerability:
             self.vuln_threat = Config.levels()["n"]
         else:
             self.vuln_threat = self.vuln_threat.lower()
-    
+
         if dolog: logging.debug("* vuln_threat:\t{}".format(self.vuln_threat))  # DEBUG
-    
+
         # --------------------
         #
         # VULN_FAMILY
         self.vuln_family:str = nvt_tmp.find("./family").text
-    
+
         if dolog: logging.debug("* vuln_family:\t{}".format(self.vuln_family))  # DEBUG
-    
+
         # --------------------
         #
         # VULN_CVES
@@ -273,9 +286,9 @@ class ParseVulnerability:
         #     vuln_references = []
         # else:
         #     vuln_references = vuln_references.text.lower().replace("url:", "\n")
-    
+
         # if dolog: logging.debug("* vuln_references:\t{}".format(vuln_references))  # DEBUG
-    
+
         # --------------------
         #
         # VULN_DESCRIPTION
@@ -284,10 +297,10 @@ class ParseVulnerability:
             self.vuln_result = ""
         else:
             self.vuln_result = tmpVulnResult.text
-    
+
         # Replace double newlines by a single newline
         self.vuln_result:str = self.vuln_result.replace("(\r\n)+", "\n")
-    
+
         if dolog: logging.debug("* vuln_result:\t{}".format(self.vuln_result))  # DEBUG
 
     @classmethod
@@ -300,18 +313,18 @@ class ParseVulnerability:
         - if this <result> has a valid nvt-oid
         - if this <result> has a severity level equal or higher than min_lvl
         - check if host_name is in the list of excluded files and return None if so
-        - check if host_name is in the list of included only files 
-        
+        - check if host_name is in the list of included only files
+
         : param: vuln: <result> openvas xml report element
         : type: xml.etree import ElementTree as Et or xml.etree import cElementTree as Et
-        
+
         : param: min_level: minimal level for inclusion on the report
         : type: one of {c, h, m, l, n}
         """
         if not isinstance(config, Config):
             raise TypeError("Expected Config, got '{}' instead".format(type(config)))
-            
-        
+
+
         # nvt has oid?
         vuln_id:str = vuln.find('./nvt').get('oid')
         if not vuln_id or vuln_id == "0":
@@ -321,7 +334,7 @@ class ParseVulnerability:
         if config.networks_excluded is not None or config.networks_included is not None:
             host_ip:str = vuln.find('./host').text
             host_ip_addr = netaddr.IPAddress(host_ip)
-        
+
         if config.networks_excluded is not None:
             for ipline in config.networks_excluded:
                 if host_ip_addr in ipline:
@@ -331,20 +344,20 @@ class ParseVulnerability:
             _included = False
             for ipline in config.networks_included:
                 if host_ip_addr in ipline:
-                    _included = True        
+                    _included = True
             if not _included:
                 return None
-            
+
         # check regex expressions inclusion and exclusion
         if config.regex_excluded is not None or config.regex_included is not None:
             vuln_name:str = vuln.find('./name').text
-        
+
         # does any of regex_excluded matches this vulnerability name?
         if config.regex_excluded is not None:
             for regex_entry in config.regex_excluded:
                 if regex_entry.search(vuln_name):
                     return None
-                
+
         # does any of regex_included matches this vulnerability name?
         if config.regex_included is not None:
             _included = False
@@ -365,7 +378,7 @@ class ParseVulnerability:
             for cve_entry in config.cve_excluded:
                 if cve_entry in cve_list:
                     return None
-                    
+
         # does any cve_include is in this list?
         if config.cve_included is not None:
             _included = False
@@ -374,7 +387,7 @@ class ParseVulnerability:
                     _included = True
             if not _included:
                 return None
-                    
+
         # vuln severity >= min_level?
         vuln_cvss:float = vuln.find('./severity').text
         if vuln_cvss is None:
@@ -382,9 +395,9 @@ class ParseVulnerability:
         vuln_cvss = float(vuln_cvss)
         if vuln_cvss >= Config.thresholds()[config.min_level]:
             return cls(vuln, config.min_level)
-        
-        return None 
-      
+
+        return None
+
 class Host(object):
     """Host information"""
 
@@ -402,7 +415,7 @@ class Host(object):
             raise TypeError("Expected basestring, got '{}' instead".format(type(ip)))
         if not isinstance(host_name, str):
             raise TypeError("Expected basestring, got '{}' instead".format(type(host_name)))
- 
+
         self.ip = ip
         self.host_name = host_name
         self.num_vulns = 0
@@ -415,14 +428,14 @@ class Host(object):
         self.sum_cvss = 0
         self.higher_cvss = 0
         self.vuln_list = []
- 
+
     def addvulnerability(self, parsed_vuln: ParseVulnerability):
         """
         Creates and adds a new vulnerability from an instance of ParseVulnerability
-        
+
         : param: parsed_vuln: parsed openvas xml <result> element
         : type: ParseVulnerability
-        
+
         raises TypeError
         """
         if not isinstance(parsed_vuln, ParseVulnerability):
@@ -432,7 +445,7 @@ class Host(object):
         for v in self.vuln_list:
             if v.vuln_id == parsed_vuln.vuln_id:
                 return
-            
+
         v = Vulnerability(parsed_vuln.vuln_id,
                           name=parsed_vuln.vuln_name,
                           version=parsed_vuln.vuln_version,
@@ -455,10 +468,10 @@ class Host(object):
         self.sum_cvss += v.cvss
         if v.cvss > self.higher_cvss:
             self.higher_cvss = v.cvss
-    
+
     def nv_total(self):
         return self.nv['critical'] + self.nv['high'] + self.nv['medium'] + self.nv['low']
-                   
+
     def __eq__(self, other:'Host'):
         return (
                 isinstance(other, Host) and
@@ -537,8 +550,8 @@ class Vulnerability(object):
             raise TypeError("Expected dict, got '{}' instead".format(type(tags)))
         if not isinstance(references, str):
             raise TypeError("Expected string, got '{}' instead".format(type(references)))
-        
-        
+
+
         self.vuln_id = vuln_id
         self.name = name
         self.cves = cves
@@ -601,7 +614,7 @@ class Vulnerability(object):
                 other.references != self.references or
                 other.threat != self.threat or
                 other.family != self.family or
-                other.result != self.result 
+                other.result != self.result
             ):
             return False
 
@@ -619,11 +632,11 @@ class ResultTree(dict):
 
     def addresult(self, parsed_vuln: ParseVulnerability):
         """
-        Adds a new vulnerability to an existing Host instance or creates one 
-        
+        Adds a new vulnerability to an existing Host instance or creates one
+
         : param: parsed_vuln: parsed openvas xml <result> element
         : type: ParseVulnerability
-        
+
         raises TypeError
         """
         if not isinstance(parsed_vuln, ParseVulnerability):
@@ -635,12 +648,12 @@ class ResultTree(dict):
         except KeyError:
             self[hostip] = Host(hostip, parsed_vuln.vuln_host_name)
             self[hostip].addvulnerability(parsed_vuln)
-            
+
     def sortedbysumcvss(self):
         """
         Returns a dict of keys and sum of cvss severity ordered by sum of cvss severity
         """
-        temp_dict = {} 
+        temp_dict = {}
         for key in self:
             temp_dict[key] = (self[key].higher_cvss, self[key].sum_cvss)
         s = list({key: v1 for key, v1 in sorted(temp_dict.items(), key=lambda x: (x[1], x[0]), reverse = True)}.keys())
@@ -659,18 +672,14 @@ class ResultTree(dict):
     def sorted_keys_by_rank(self):
         """
         Returns a list of keys of self reverse ordered by rank. 'Rank' here emulates
-        the order used at openvas' host tab in the report page of a task: 
+        the order used at openvas' host tab in the report page of a task:
         higher_cvss -> # critical vulns -> # high vulns -> # medium vulns -> # low vulns
         """
         temp_list = []
         for key in self:
-            temp_list.append((self[key].nv['low'], self[key].nv['medium'], self[key].nv['high'], 
+            temp_list.append((self[key].nv['low'], self[key].nv['medium'], self[key].nv['high'],
                               self[key].nv['critical'], self[key].higher_cvss, key))
-        s = [v[5] for v in sorted(temp_list, 
-                                  key = lambda x: (x[4], x[3], x[2], x[1], x[0]), 
+        s = [v[5] for v in sorted(temp_list,
+                                  key = lambda x: (x[4], x[3], x[2], x[1], x[0]),
                                   reverse=True)]
         return s
-
-
-    
-
