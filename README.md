@@ -8,7 +8,7 @@
 
 A tool to convert [OpenVAS](http://www.openvas.org/) XML into reports, now dockerized.
 
-![Report example screenshot](src/docs/_static/img/OpenVASreporting.png?raw=true)
+![HeaderLogo](src/docs/_static/img/OpenVASreporting.png?raw=true)
 
 *Read the full documentation at [https://openvas-reporting.sequr.be](https://openvas-reporting.sequr.be)*
 
